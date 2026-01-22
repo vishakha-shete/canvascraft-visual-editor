@@ -62,8 +62,103 @@ button {
     font-size: 12px;
 }
 
+button:hover {
+    background: #444;
+    border-color: #555;
+}
+
 button.primary {
     background: var(--accent);
     border-color: var(--accent);
     font-weight: 600;
+}
+
+.app-body {
+    display: flex;
+    height: calc(100vh - var(--header-h));
+}
+
+.sidebar {
+    width: var(--panel-w);
+    background: var(--bg-sidebar);
+    display: flex;
+    flex-direction: column;
+    border-right: 2px solid var(--border);
+}
+
+.sidebar-right {
+    border-right: none;
+    border-left: 1px solid var(--border);
+}
+
+.tool-group {
+    padding: 0 16px 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.section-title {
+    padding: 12px 16px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+}
+
+.prop-row {
+    padding: 6px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+}
+
+.prop-row input {
+    width: 70px;
+    background: #121212;
+    border: 1px solid #444;
+    color: var(--accent);
+    padding: 4px;
+    border-radius: 3px;
+    text-align: right;
+    cursor: pointer;
+}
+
+.sidebar-bottom {
+    margin-top: auto;
+    padding: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.sidebar-bottom-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.sidebar-bottom-buttons button {
+    flex: 1
+}
+
+.workspace {
+    flex: 1;
+    background: var(--bg-canvas);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+}
+
+#canvas {
+    width: 800px;
+    height: 600px;
+    background: #ffffff;
+    position: relative;
+    border: 1px solid #ccc;
+}
+
+#properties-panel {
+    padding: 8px 0;
+    font-size: 13px;
 }
