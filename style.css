@@ -156,9 +156,20 @@ button.primary {
     background: #ffffff;
     position: relative;
     border: 1px solid #ccc;
+    overflow: hidden;
+    /* Grid Pattern */
+    background-size: 20px 20px;
+    background-image: linear-gradient(to right, #f0f0f0 1px, transparent 1px),
+        linear-gradient(to bottom, #f0f0f0 1px, transparent 1px);
 }
 
 #properties-panel {
     padding: 8px 0;
     font-size: 13px;
+}
+
+#properties-panel p {
+    padding: 16px;
+    font-size: 12px;
+    color: #999;
 }
