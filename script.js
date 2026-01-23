@@ -17,6 +17,7 @@ let startSize = { w: 0, h: 0 };
 const canvas = document.getElementById("canvas");
 const addRectBtn = document.getElementById("add-rect");
 const propertiesPanel = document.getElementById("properties-panel");
+const layersList = document.getElementById("layers-list");
 const saveBtn = document.getElementById("save-btn");
 const exportJsonBtn = document.getElementById("export-json");
 const exportHtmlBtn = document.getElementById("export-html");
@@ -30,7 +31,8 @@ addRectBtn.addEventListener("click", () => {
         y: 50,
         width: 120,
         height: 80,
-        color: "#0d99ff"
+        color: "#0d99ff",
+        zIndex: elements.length
     };
 
     elements.push(rect);
@@ -173,6 +175,7 @@ top:${el.y}px;
 width:${el.width}px;
 height:${el.height}px;
 background:${el.color};
+z-index:${el.zIndex};
 "></div>
 `).join("")}
 </div>
@@ -254,6 +257,7 @@ function render() {
     });
 
     updatePropertiesPanel();
+    renderLayersPanel();
 }
 
 
@@ -300,6 +304,58 @@ function updatePropertiesPanel() {
         el.color = e.target.value;
         render();
     });
+}
+
+// LAYERS PANEl 
+
+function renderLayersPanel() {
+    layersList.innerHTML = "";
+
+    [...elements]
+        .sort((a, b) => b.zIndex - a.zIndex)
+        .forEach(el => {
+            const item = document.createElement("div");
+            item.className = "layer-item";
+            if (el.id === selectedId) item.classList.add("active");
+
+            item.innerHTML = `
+                <span>Rectangle</span>
+                <div>
+                    <button>↑</button>
+                    <button>↓</button>
+                </div>
+            `;
+
+            item.onclick = () => {
+                selectedId = el.id;
+                render();
+            };
+
+            item.querySelectorAll("button")[0].onclick = e => {
+                e.stopPropagation();
+                moveLayer(el.id, 1);
+            };
+
+            item.querySelectorAll("button")[1].onclick = e => {
+                e.stopPropagation();
+                moveLayer(el.id, -1);
+            };
+
+            layersList.appendChild(item);
+        });
+}
+
+function moveLayer(id, direction) {
+    const index = elements.findIndex(el => el.id === id);
+    const target = index + direction;
+
+    if (target < 0 || target >= elements.length) return;
+
+    const temp = elements[index].zIndex;
+    elements[index].zIndex = elements[target].zIndex;
+    elements[target].zIndex = temp;
+
+    render();
 }
 
 //AUTO LOAD

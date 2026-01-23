@@ -189,3 +189,56 @@ button.primary {
     bottom: -6px;
     cursor: se-resize;
 }
+
+#layers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.layer-item {
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: transparent;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-main);
+    border-bottom: 1px solid var(--border);
+}
+
+.layer-item:hover {
+    background: #2a2a2a;
+}
+
+.layer-item.active {
+    background: #333;
+    color: var(--accent);
+    border-left: 3px solid var(--accent);
+}
+
+.layer-item span {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.layer-item div {
+    display: flex;
+    gap: 4px;
+}
+
+.layer-item button {
+    background: #444;
+    border: none;
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.layer-item button:hover {
+    background: var(--accent);
+    color: #fff;
+}
