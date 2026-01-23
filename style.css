@@ -176,5 +176,5 @@ button.primary {
 
 .element {
     position: absolute;
-    cursor: pointer;
+    cursor: move;
 }

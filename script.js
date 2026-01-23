@@ -1,6 +1,11 @@
 let elements = [];
 let selectedId = null;
 
+let isDragging = false;
+let dragStart = { x: 0, y: 0 };
+let elementStart = { x: 0, y: 0 };
+
+
 const canvas = document.getElementById("canvas");
 const addRectBtn = document.getElementById("add-rect");
 
@@ -24,6 +29,33 @@ canvas.addEventListener("click", () => {
     render();
 });
 
+
+window.addEventListener("mousemove", (e) => {
+    if (!isDragging || selectedId === null) return;
+
+    const el = elements.find(item => item.id === selectedId);
+    if (!el) return;
+
+    const dx = e.clientX - dragStart.x;
+    const dy = e.clientY - dragStart.y;
+
+    el.x = elementStart.x + dx;
+    el.y = elementStart.y + dy;
+
+    // Keep inside canvas
+    el.x = Math.max(0, Math.min(el.x, canvas.clientWidth - el.width));
+    el.y = Math.max(0, Math.min(el.y, canvas.clientHeight - el.height));
+
+    render();
+});
+
+
+window.addEventListener("mouseup", () => {
+    isDragging = false;
+});
+
+
+
 function render() {
     canvas.innerHTML = "";
 
@@ -45,6 +77,20 @@ function render() {
             selectedId = el.id;
             render();
         });
+
+        div.addEventListener("mousedown", (e) => {
+            e.stopPropagation();
+
+            if (el.id !== selectedId) return;
+
+            isDragging = true;
+            dragStart.x = e.clientX;
+            dragStart.y = e.clientY;
+
+            elementStart.x = el.x;
+            elementStart.y = el.y;
+        });
+
 
         canvas.appendChild(div);
     });
