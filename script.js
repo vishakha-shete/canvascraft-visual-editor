@@ -89,6 +89,37 @@ window.addEventListener("mouseup", () => {
 });
 
 
+// KEYBOARD CONTROLS
+window.addEventListener("keydown", (e) => {
+    if (selectedId === null) return;
+
+    const el = elements.find(item => item.id === selectedId);
+    if (!el) return;
+
+    const step = 5;
+
+    // Delete element
+    if (e.key === "Delete") {
+        elements = elements.filter(item => item.id !== selectedId);
+        selectedId = null;
+        render();
+        return;
+    }
+
+    // Move with arrow keys
+    if (e.key === "ArrowLeft") el.x -= step;
+    if (e.key === "ArrowRight") el.x += step;
+    if (e.key === "ArrowUp") el.y -= step;
+    if (e.key === "ArrowDown") el.y += step;
+
+    el.x = Math.max(0, Math.min(el.x, canvas.clientWidth - el.width));
+    el.y = Math.max(0, Math.min(el.y, canvas.clientHeight - el.height));
+
+    render();
+});
+
+
+
 // RENDER 
 function render() {
     canvas.innerHTML = "";
