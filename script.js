@@ -21,6 +21,7 @@ const GRID_SIZE = 20;
 // DOM REFERENCES
 const canvas = document.getElementById("canvas");
 const addRectBtn = document.getElementById("add-rect");
+const addTextBtn = document.getElementById("add-text");
 const propertiesPanel = document.getElementById("properties-panel");
 const layersList = document.getElementById("layers-list");
 const saveBtn = document.getElementById("save-btn");
@@ -45,6 +46,7 @@ function snap(value) {
 addRectBtn.addEventListener("click", () => {
     const rect = {
         id: Date.now(),
+        type: "rect",
         x: 50,
         y: 50,
         width: 120,
@@ -55,6 +57,24 @@ addRectBtn.addEventListener("click", () => {
 
     elements.push(rect);
     selectedId = rect.id;
+    render();
+});
+
+addTextBtn.addEventListener("click", () => {
+    const textEl = {
+        id: Date.now(),
+        x: 60,
+        y: 60,
+        width: 160,
+        height: 40,
+        color: "#000000",
+        text: "Double click to edit",
+        type: "text",
+        zIndex: elements.length
+    };
+
+    elements.push(textEl);
+    selectedId = textEl.id;
     render();
 });
 
@@ -194,9 +214,14 @@ left:${el.x}px;
 top:${el.y}px;
 width:${el.width}px;
 height:${el.height}px;
-background:${el.color};
+background:${el.type === "text" ? "transparent" : el.color};
+color:${el.color};
+display:flex;
+align-items:center;
+justify-content:center;
 z-index:${el.zIndex};
-"></div>
+">${el.type === "text" ? el.text : ""}
+</div>
 `).join("")}
 </div>
 </body>
@@ -221,12 +246,33 @@ function render() {
     elements.forEach(el => {
         const div = document.createElement("div");
         div.className = "element";
+
         div.style.left = el.x + "px";
         div.style.top = el.y + "px";
         div.style.width = el.width + "px";
         div.style.height = el.height + "px";
-        div.style.background = el.color;
         div.style.zIndex = el.zIndex;
+
+
+        if (el.type === "rect") {
+            div.style.background = el.color;
+        } else {
+            div.style.background = "transparent";
+            div.style.color = el.color;
+            div.style.display = "flex";
+            div.style.alignItems = "center";
+            div.style.justifyContent = "center";
+            div.textContent = el.text;
+
+            div.addEventListener("dblclick", (e) => {
+                e.stopPropagation();
+                const newText = prompt("Edit text:", el.text);
+                if (newText !== null) {
+                    el.text = newText;
+                    render();
+                }
+            });
+        }
 
         // Selection border
         if (el.id === selectedId) {
@@ -292,7 +338,15 @@ function updatePropertiesPanel() {
     }
 
     const el = elements.find(item => item.id === selectedId);
-    if (!el) return;
+
+    let textField = "";
+    if (el.type === "text") {
+        textField = `
+            <div class="prop-row">
+                <span>Text</span>
+                <input type="text" id="prop-text" value="${el.text}">
+            </div>`;
+    }
 
     propertiesPanel.innerHTML = `
         <div class="prop-row">
@@ -309,6 +363,8 @@ function updatePropertiesPanel() {
             <span>Color</span>
             <input type="color" id="prop-color" value="${el.color}">
         </div>
+        ${textField}
+
     `;
 
     document.getElementById("prop-width").addEventListener("input", (e) => {
@@ -325,6 +381,13 @@ function updatePropertiesPanel() {
         el.color = e.target.value;
         render();
     });
+
+    if (el.type === "text") {
+        document.getElementById("prop-text").oninput = e => {
+            el.text = e.target.value;
+            render();
+        };
+    }
 }
 
 // LAYERS PANEl 
@@ -340,7 +403,7 @@ function renderLayersPanel() {
             if (el.id === selectedId) item.classList.add("active");
 
             item.innerHTML = `
-            <span>Layer ${el.id.toString().slice(-4)}</span>
+            <span>${el.type === "text" ? "Text" : "Rectangle"} ${el.id.toString().slice(-4)}</span>
             <div>
                     <button>↑</button>
                     <button>↓</button>

@@ -157,6 +157,7 @@ button.primary {
     position: relative;
     border: 1px solid #ccc;
     overflow: hidden;
+    user-select: none;
     /* Grid Pattern */
     background-size: 20px 20px;
     background-image: linear-gradient(to right, #f0f0f0 1px, transparent 1px),
