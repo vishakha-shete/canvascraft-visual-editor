@@ -13,6 +13,11 @@ let isResizing = false;
 let resizeStart = { x: 0, y: 0 };
 let startSize = { w: 0, h: 0 };
 
+
+// Snap to grid
+let snapToGrid = false;
+const GRID_SIZE = 20;
+
 // DOM REFERENCES
 const canvas = document.getElementById("canvas");
 const addRectBtn = document.getElementById("add-rect");
@@ -21,6 +26,19 @@ const layersList = document.getElementById("layers-list");
 const saveBtn = document.getElementById("save-btn");
 const exportJsonBtn = document.getElementById("export-json");
 const exportHtmlBtn = document.getElementById("export-html");
+const snapToggle = document.getElementById("snap-toggle");
+
+
+// SNAP TO GRID
+snapToggle.addEventListener("change", () => {
+    snapToGrid = snapToggle.checked;
+});
+
+function snap(value) {
+    return snapToGrid
+        ? Math.round(value / GRID_SIZE) * GRID_SIZE
+        : value;
+}
 
 
 // ADD RECTANGLE
@@ -40,11 +58,13 @@ addRectBtn.addEventListener("click", () => {
     render();
 });
 
+
 // DESELECT ON CANVAS CLICK
 canvas.addEventListener("click", () => {
     selectedId = null;
     render();
 });
+
 
 // MOUSE MOVE  (RESIZE FIRST, THEN DRAG)
 window.addEventListener("mousemove", (e) => {
@@ -57,8 +77,8 @@ window.addEventListener("mousemove", (e) => {
         const dx = e.clientX - resizeStart.x;
         const dy = e.clientY - resizeStart.y;
 
-        el.width = Math.max(40, startSize.w + dx);
-        el.height = Math.max(40, startSize.h + dy);
+        el.width = Math.max(40, snap(startSize.w + dx));
+        el.height = Math.max(40, snap(startSize.h + dy));
 
         // Keep resize inside canvas
         el.width = Math.min(el.width, canvas.clientWidth - el.x);
@@ -78,8 +98,8 @@ window.addEventListener("mousemove", (e) => {
     const dx = e.clientX - dragStart.x;
     const dy = e.clientY - dragStart.y;
 
-    el.x = elementStart.x + dx;
-    el.y = elementStart.y + dy;
+    el.x = snap(elementStart.x + dx);
+    el.y = snap(elementStart.y + dy);
 
     // Keep inside canvas
     el.x = Math.max(0, Math.min(el.x, canvas.clientWidth - el.width));
@@ -102,7 +122,7 @@ window.addEventListener("keydown", (e) => {
     const el = elements.find(item => item.id === selectedId);
     if (!el) return;
 
-    const step = 5;
+    const step = snapToGrid ? GRID_SIZE : 5;
 
     // Delete element
     if (e.key === "Delete") {
