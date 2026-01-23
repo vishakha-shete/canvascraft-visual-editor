@@ -226,6 +226,7 @@ function render() {
         div.style.width = el.width + "px";
         div.style.height = el.height + "px";
         div.style.background = el.color;
+        div.style.zIndex = el.zIndex;
 
         // Selection border
         if (el.id === selectedId) {
@@ -339,8 +340,8 @@ function renderLayersPanel() {
             if (el.id === selectedId) item.classList.add("active");
 
             item.innerHTML = `
-                <span>Rectangle</span>
-                <div>
+            <span>Layer ${el.id.toString().slice(-4)}</span>
+            <div>
                     <button>↑</button>
                     <button>↓</button>
                 </div>
