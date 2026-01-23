@@ -18,6 +18,9 @@ const canvas = document.getElementById("canvas");
 const addRectBtn = document.getElementById("add-rect");
 const propertiesPanel = document.getElementById("properties-panel");
 const saveBtn = document.getElementById("save-btn");
+const exportJsonBtn = document.getElementById("export-json");
+const exportHtmlBtn = document.getElementById("export-html");
+
 
 // ADD RECTANGLE
 addRectBtn.addEventListener("click", () => {
@@ -139,6 +142,53 @@ saveBtn.addEventListener("click", () => {
     alert("Project saved successfully!");
 });
 
+
+// EXPORT
+exportJsonBtn.addEventListener("click", exportJSON);
+exportHtmlBtn.addEventListener("click", exportHTML);
+
+function exportJSON() {
+    const blob = new Blob(
+        [JSON.stringify(elements, null, 2)],
+        { type: "application/json" }
+    );
+    downloadFile(blob, "design.json");
+}
+
+function exportHTML() {
+    const html = `
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CanvasCraft Export</title>
+</head>
+<body style="margin:0;display:flex;justify-content:center;align-items:center;height:100vh;background:#111;">
+<div style="position:relative;width:800px;height:600px;background:#fff;">
+${elements.map(el => `
+<div style="
+position:absolute;
+left:${el.x}px;
+top:${el.y}px;
+width:${el.width}px;
+height:${el.height}px;
+background:${el.color};
+"></div>
+`).join("")}
+</div>
+</body>
+</html>
+    `;
+    downloadFile(new Blob([html], { type: "text/html" }), "design.html");
+}
+
+function downloadFile(blob, filename) {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
 
 
 // RENDER 
