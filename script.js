@@ -17,6 +17,7 @@ let startSize = { w: 0, h: 0 };
 const canvas = document.getElementById("canvas");
 const addRectBtn = document.getElementById("add-rect");
 const propertiesPanel = document.getElementById("properties-panel");
+const saveBtn = document.getElementById("save-btn");
 
 // ADD RECTANGLE
 addRectBtn.addEventListener("click", () => {
@@ -63,7 +64,7 @@ window.addEventListener("mousemove", (e) => {
     }
 
 
-    // DRAGE
+    // DRAGE 
     if (!isDragging || selectedId === null) return;
 
     const el = elements.find(item => item.id === selectedId);
@@ -116,6 +117,26 @@ window.addEventListener("keydown", (e) => {
     el.y = Math.max(0, Math.min(el.y, canvas.clientHeight - el.height));
 
     render();
+});
+
+// SAVE & LOAD
+function saveToLocalStorage() {
+    localStorage.setItem("canvasElements", JSON.stringify(elements));
+}
+
+function loadFromLocalStorage() {
+    const data = localStorage.getItem("canvasElements");
+    if (data) {
+        elements = JSON.parse(data);
+        selectedId = null;
+        render();
+    }
+}
+
+// Save button
+saveBtn.addEventListener("click", () => {
+    saveToLocalStorage();
+    alert("Project saved successfully!");
 });
 
 
@@ -230,3 +251,6 @@ function updatePropertiesPanel() {
         render();
     });
 }
+
+//AUTO LOAD
+loadFromLocalStorage();
