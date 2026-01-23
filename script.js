@@ -8,8 +8,12 @@ let isDragging = false;
 let dragStart = { x: 0, y: 0 };
 let elementStart = { x: 0, y: 0 };
 
+// Resize helpers
+let isResizing = false;
+let resizeStart = { x: 0, y: 0 };
+let startSize = { w: 0, h: 0 };
 
-// DOM SELECTION
+// DOM REFERENCES
 const canvas = document.getElementById("canvas");
 const addRectBtn = document.getElementById("add-rect");
 
@@ -36,8 +40,30 @@ canvas.addEventListener("click", () => {
     render();
 });
 
-// MOUSE MOVE (DRAG)
+// MOUSE MOVE  (RESIZE FIRST, THEN DRAG)
 window.addEventListener("mousemove", (e) => {
+
+    // ----- RESIZE -----
+    if (isResizing && selectedId !== null) {
+        const el = elements.find(item => item.id === selectedId);
+        if (!el) return;
+
+        const dx = e.clientX - resizeStart.x;
+        const dy = e.clientY - resizeStart.y;
+
+        el.width = Math.max(40, startSize.w + dx);
+        el.height = Math.max(40, startSize.h + dy);
+
+        // Keep resize inside canvas
+        el.width = Math.min(el.width, canvas.clientWidth - el.x);
+        el.height = Math.min(el.height, canvas.clientHeight - el.y);
+
+        render();
+        return;
+    }
+
+
+    // DRAGE
     if (!isDragging || selectedId === null) return;
 
     const el = elements.find(item => item.id === selectedId);
@@ -56,9 +82,10 @@ window.addEventListener("mousemove", (e) => {
     render();
 });
 
-// STOP DRAG
+// STOP DRAG 
 window.addEventListener("mouseup", () => {
     isDragging = false;
+    isResizing = false;
 });
 
 
@@ -78,6 +105,24 @@ function render() {
         // Selection border
         if (el.id === selectedId) {
             div.style.outline = "2px solid #0d99ff";
+
+
+            // Resize handle
+            const handle = document.createElement("div");
+            handle.className = "resize-handle";
+
+            handle.addEventListener("mousedown", (e) => {
+                e.stopPropagation();
+                isResizing = true;
+
+                resizeStart.x = e.clientX;
+                resizeStart.y = e.clientY;
+                startSize.w = el.width;
+                startSize.h = el.height;
+            });
+
+            div.appendChild(handle);
+
         }
 
         //select element
