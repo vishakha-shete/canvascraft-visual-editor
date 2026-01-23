@@ -16,7 +16,7 @@ let startSize = { w: 0, h: 0 };
 // DOM REFERENCES
 const canvas = document.getElementById("canvas");
 const addRectBtn = document.getElementById("add-rect");
-
+const propertiesPanel = document.getElementById("properties-panel");
 
 // ADD RECTANGLE
 addRectBtn.addEventListener("click", () => {
@@ -26,7 +26,7 @@ addRectBtn.addEventListener("click", () => {
         y: 50,
         width: 120,
         height: 80,
-        type: "rect"
+        color: "#0d99ff"
     };
 
     elements.push(rect);
@@ -82,7 +82,7 @@ window.addEventListener("mousemove", (e) => {
     render();
 });
 
-// STOP DRAG 
+// STOP DRAG / RESIZE
 window.addEventListener("mouseup", () => {
     isDragging = false;
     isResizing = false;
@@ -100,7 +100,7 @@ function render() {
         div.style.top = el.y + "px";
         div.style.width = el.width + "px";
         div.style.height = el.height + "px";
-        div.style.background = "#0d99ff";
+        div.style.background = el.color;
 
         // Selection border
         if (el.id === selectedId) {
@@ -149,5 +149,53 @@ function render() {
 
 
         canvas.appendChild(div);
+    });
+
+    updatePropertiesPanel();
+}
+
+
+// PROPERTIES PANEL
+
+function updatePropertiesPanel() {
+
+    if (selectedId === null) {
+        propertiesPanel.innerHTML = `<p>Select an element to edit properties</p>`;
+        return;
+    }
+
+    const el = elements.find(item => item.id === selectedId);
+    if (!el) return;
+
+    propertiesPanel.innerHTML = `
+        <div class="prop-row">
+            <span>Width</span>
+            <input type="number" id="prop-width" value="${el.width}">
+        </div>
+
+        <div class="prop-row">
+            <span>Height</span>
+            <input type="number" id="prop-height" value="${el.height}">
+        </div>
+
+        <div class="prop-row">
+            <span>Color</span>
+            <input type="color" id="prop-color" value="${el.color}">
+        </div>
+    `;
+
+    document.getElementById("prop-width").addEventListener("input", (e) => {
+        el.width = Math.max(40, Number(e.target.value));
+        render();
+    });
+
+    document.getElementById("prop-height").addEventListener("input", (e) => {
+        el.height = Math.max(40, Number(e.target.value));
+        render();
+    });
+
+    document.getElementById("prop-color").addEventListener("input", (e) => {
+        el.color = e.target.value;
+        render();
     });
 }
