@@ -1,14 +1,20 @@
+// STATE
 let elements = [];
 let selectedId = null;
 
+
+// Drag helpers
 let isDragging = false;
 let dragStart = { x: 0, y: 0 };
 let elementStart = { x: 0, y: 0 };
 
 
+// DOM SELECTION
 const canvas = document.getElementById("canvas");
 const addRectBtn = document.getElementById("add-rect");
 
+
+// ADD RECTANGLE
 addRectBtn.addEventListener("click", () => {
     const rect = {
         id: Date.now(),
@@ -24,12 +30,13 @@ addRectBtn.addEventListener("click", () => {
     render();
 });
 
+// DESELECT ON CANVAS CLICK
 canvas.addEventListener("click", () => {
     selectedId = null;
     render();
 });
 
-
+// MOUSE MOVE (DRAG)
 window.addEventListener("mousemove", (e) => {
     if (!isDragging || selectedId === null) return;
 
@@ -49,13 +56,13 @@ window.addEventListener("mousemove", (e) => {
     render();
 });
 
-
+// STOP DRAG
 window.addEventListener("mouseup", () => {
     isDragging = false;
 });
 
 
-
+// RENDER 
 function render() {
     canvas.innerHTML = "";
 
@@ -68,16 +75,20 @@ function render() {
         div.style.height = el.height + "px";
         div.style.background = "#0d99ff";
 
+        // Selection border
         if (el.id === selectedId) {
             div.style.outline = "2px solid #0d99ff";
         }
 
+        //select element
         div.addEventListener("click", (e) => {
             e.stopPropagation();
             selectedId = el.id;
             render();
         });
 
+
+        // Mouse down to start drag
         div.addEventListener("mousedown", (e) => {
             e.stopPropagation();
 
