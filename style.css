@@ -180,6 +180,11 @@ button.primary {
     cursor: move;
 }
 
+.element.selected {
+    outline: 2px solid var(--accent);
+    box-shadow: 0 0 10px #0d99ff66;
+}
+
 .resize-handle {
     width: 10px;
     height: 10px;

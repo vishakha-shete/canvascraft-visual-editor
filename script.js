@@ -22,6 +22,7 @@ const GRID_SIZE = 20;
 const canvas = document.getElementById("canvas");
 const addRectBtn = document.getElementById("add-rect");
 const addTextBtn = document.getElementById("add-text");
+const statusMsg = document.getElementById("status-msg");
 const propertiesPanel = document.getElementById("properties-panel");
 const layersList = document.getElementById("layers-list");
 const saveBtn = document.getElementById("save-btn");
@@ -29,6 +30,11 @@ const exportJsonBtn = document.getElementById("export-json");
 const exportHtmlBtn = document.getElementById("export-html");
 const snapToggle = document.getElementById("snap-toggle");
 
+
+// HELPERS
+function setStatus(msg) {
+    statusMsg.textContent = msg;
+}
 
 // SNAP TO GRID
 snapToggle.addEventListener("change", () => {
@@ -104,6 +110,7 @@ window.addEventListener("mousemove", (e) => {
         el.width = Math.min(el.width, canvas.clientWidth - el.x);
         el.height = Math.min(el.height, canvas.clientHeight - el.y);
 
+        setStatus("Resizing...");
         render();
         return;
     }
@@ -124,7 +131,8 @@ window.addEventListener("mousemove", (e) => {
     // Keep inside canvas
     el.x = Math.max(0, Math.min(el.x, canvas.clientWidth - el.width));
     el.y = Math.max(0, Math.min(el.y, canvas.clientHeight - el.height));
-
+    
+    setStatus("Dragging...");
     render();
 });
 
@@ -132,6 +140,7 @@ window.addEventListener("mousemove", (e) => {
 window.addEventListener("mouseup", () => {
     isDragging = false;
     isResizing = false;
+    setStatus("Ready");
 });
 
 
@@ -167,6 +176,7 @@ window.addEventListener("keydown", (e) => {
 // SAVE & LOAD
 function saveToLocalStorage() {
     localStorage.setItem("canvasElements", JSON.stringify(elements));
+    setStatus("Project saved")
 }
 
 function loadFromLocalStorage() {
@@ -276,8 +286,7 @@ function render() {
 
         // Selection border
         if (el.id === selectedId) {
-            div.style.outline = "2px solid #0d99ff";
-
+            div.classList.add("selected");
 
             // Resize handle
             const handle = document.createElement("div");
@@ -444,3 +453,4 @@ function moveLayer(id, direction) {
 
 //AUTO LOAD
 loadFromLocalStorage();
+setStatus("Ready");
